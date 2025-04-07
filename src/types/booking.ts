@@ -30,6 +30,23 @@ export type BookingDetails = {
   status?: BookingStatus;
   createdAt?: Date;
   emailSent?: boolean;
+  userId?: string; // New field to associate booking with user
 };
 
 export type BookingStep = 'service' | 'datetime' | 'details' | 'confirmation' | 'history';
+
+// User types
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  dateOfBirth?: string;
+  isNewPatient?: boolean;
+  bookings: BookingDetails[];
+};
+
+export type AuthState = {
+  user: User | null;
+  isAuthenticated: boolean;
+};

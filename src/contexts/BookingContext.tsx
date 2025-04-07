@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { BookingDetails, BookingStep, Service, TimeSlot } from '../types/booking';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from './AuthContext';
 
 interface BookingContextType {
   currentStep: BookingStep;
@@ -29,6 +30,22 @@ const BookingContext = createContext<BookingContextType | undefined>(undefined);
 export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('service');
   const [bookingDetails, setBookingDetails] = useState<BookingDetails>(defaultBookingDetails);
+  const { authState, addBookingToUser } = useAuth();
+
+  // Pre-fill customer details from the authenticated user
+  React.useEffect(() => {
+    if (authState.isAuthenticated && authState.user) {
+      setBookingDetails(prev => ({
+        ...prev,
+        customerName: authState.user?.name || prev.customerName,
+        customerEmail: authState.user?.email || prev.customerEmail,
+        customerPhone: authState.user?.phone || prev.customerPhone,
+        dateOfBirth: authState.user?.dateOfBirth || prev.dateOfBirth,
+        isNewPatient: authState.user?.isNewPatient || prev.isNewPatient,
+        userId: authState.user?.id,
+      }));
+    }
+  }, [authState]);
 
   const updateBookingDetails = (details: Partial<BookingDetails>) => {
     setBookingDetails(prev => ({
@@ -38,7 +55,20 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const resetBooking = () => {
-    setBookingDetails(defaultBookingDetails);
+    // When resetting, retain user information if logged in
+    if (authState.isAuthenticated && authState.user) {
+      setBookingDetails({
+        ...defaultBookingDetails,
+        customerName: authState.user.name,
+        customerEmail: authState.user.email,
+        customerPhone: authState.user.phone || '',
+        dateOfBirth: authState.user.dateOfBirth,
+        isNewPatient: authState.user.isNewPatient,
+        userId: authState.user.id,
+      });
+    } else {
+      setBookingDetails(defaultBookingDetails);
+    }
     setCurrentStep('service');
   };
 
@@ -71,6 +101,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
     
     console.log('Booking completed:', bookingWithId);
+    
+    // If user is authenticated, associate booking with user
+    if (authState.isAuthenticated && authState.user) {
+      addBookingToUser(authState.user.id, bookingWithId);
+    }
     
     // Send confirmation email if email is provided
     if (bookingWithId.customerEmail) {

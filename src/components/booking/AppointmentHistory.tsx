@@ -1,201 +1,141 @@
 
-import React, { useState } from 'react';
-import { format } from 'date-fns';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useBooking } from '@/contexts/BookingContext';
-import { Calendar, Clock, FileText } from 'lucide-react';
-import { BookingDetails, BookingStatus } from '@/types/booking';
-
-// Mock patient appointments history data
-// In a real app, this would come from an API based on the patient's email/ID
-const mockAppointmentHistory: BookingDetails[] = [
-  {
-    id: "apt-001",
-    service: {
-      id: "1",
-      name: "Initial Consultation",
-      description: "First-time patient assessment and care planning",
-      duration: 45,
-      price: 85,
-      category: "Consultations"
-    },
-    date: new Date('2025-03-15T10:00:00'),
-    timeSlot: {
-      startTime: "10:00",
-      endTime: "10:45",
-      available: false
-    },
-    customerName: "John Doe",
-    customerEmail: "john.doe@example.com",
-    customerPhone: "555-123-4567",
-    dateOfBirth: "1980-05-15",
-    isNewPatient: true,
-    notes: "First consultation for high blood pressure concerns",
-    status: "completed",
-    createdAt: new Date('2025-03-10T14:30:00')
-  },
-  {
-    id: "apt-002",
-    service: {
-      id: "3",
-      name: "Blood Pressure Check",
-      description: "Routine blood pressure monitoring",
-      duration: 15,
-      price: 35,
-      category: "Routine Care"
-    },
-    date: new Date('2025-03-30T14:15:00'),
-    timeSlot: {
-      startTime: "14:15",
-      endTime: "14:30",
-      available: false
-    },
-    customerName: "John Doe",
-    customerEmail: "john.doe@example.com",
-    customerPhone: "555-123-4567",
-    dateOfBirth: "1980-05-15",
-    isNewPatient: false,
-    notes: "Follow-up appointment",
-    status: "completed",
-    createdAt: new Date('2025-03-25T09:15:00')
-  },
-  {
-    id: "apt-003",
-    service: {
-      id: "5",
-      name: "Medication Review",
-      description: "Review and adjustment of current medications",
-      duration: 30,
-      price: 60,
-      category: "Consultations"
-    },
-    date: new Date('2025-04-20T11:30:00'),
-    timeSlot: {
-      startTime: "11:30",
-      endTime: "12:00",
-      available: false
-    },
-    customerName: "John Doe",
-    customerEmail: "john.doe@example.com",
-    customerPhone: "555-123-4567",
-    dateOfBirth: "1980-05-15",
-    isNewPatient: false,
-    notes: "Medication review and potential adjustments",
-    status: "scheduled",
-    createdAt: new Date('2025-04-05T16:45:00')
-  }
-];
-
-const getStatusBadgeColor = (status: BookingStatus) => {
-  switch (status) {
-    case 'scheduled':
-      return 'bg-blue-100 text-blue-800';
-    case 'completed':
-      return 'bg-green-100 text-green-800';
-    case 'cancelled':
-      return 'bg-red-100 text-red-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
-  }
-};
+import { useAuth } from '@/contexts/AuthContext';
+import { format } from 'date-fns';
 
 const AppointmentHistory: React.FC = () => {
-  const { resetBooking, setCurrentStep } = useBooking();
-  const [appointments] = useState<BookingDetails[]>(mockAppointmentHistory);
-
-  const handleNewBooking = () => {
-    resetBooking();
-    setCurrentStep('service');
-  };
+  const { resetBooking } = useBooking();
+  const { authState } = useAuth();
+  
+  const bookings = authState.user?.bookings || [];
+  const hasBookings = bookings.length > 0;
 
   return (
-    <div className="booking-step max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-8">
+      <div className="text-center">
         <h2 className="text-2xl font-bold">Your Appointment History</h2>
-        <Button 
-          className="bg-booking hover:bg-booking-dark"
-          onClick={handleNewBooking}
-        >
-          Book New Appointment
-        </Button>
-      </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Past and Upcoming Appointments</CardTitle>
-          <CardDescription>
-            View your complete appointment history with Nurse Connect
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {appointments.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground mb-4">You don't have any appointments yet</p>
-              <Button onClick={handleNewBooking}>Book Your First Appointment</Button>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Service</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Notes</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {appointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1 font-medium">
-                          <Calendar className="h-3.5 w-3.5 text-booking" />
-                          {appointment.date ? format(appointment.date, 'MMM d, yyyy') : 'N/A'}
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="h-3 w-3" />
-                          {appointment.timeSlot ? `${appointment.timeSlot.startTime} - ${appointment.timeSlot.endTime}` : 'N/A'}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{appointment.service?.name || 'N/A'}</p>
-                        <p className="text-sm text-muted-foreground">{appointment.service?.duration} min</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusBadgeColor(appointment.status as BookingStatus)}>
-                        {appointment.status ? appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1) : 'N/A'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-start gap-1 max-w-xs">
-                        <FileText className="h-3.5 w-3.5 text-booking mt-0.5" />
-                        <span className="text-sm">{appointment.notes || 'No notes'}</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-      
-      <div className="mt-8 text-center">
-        <p className="text-sm text-muted-foreground mb-2">
-          Need to cancel or reschedule an upcoming appointment?
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Please call our office at (555) 123-4567 at least 24 hours in advance.
+        <p className="text-muted-foreground mt-2">
+          {hasBookings 
+            ? "Here's a record of your recent appointments" 
+            : "You don't have any appointment history yet"}
         </p>
       </div>
+
+      {!authState.isAuthenticated && (
+        <Card className="border-dashed border-2 border-booking/30">
+          <CardHeader className="text-center">
+            <CardTitle>Log In to View Your Appointments</CardTitle>
+            <CardDescription>
+              Create or log into your account to track your appointment history
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button
+              className="bg-booking hover:bg-booking-dark"
+              onClick={() => window.location.href = '/account'}
+            >
+              Go to Account
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {authState.isAuthenticated && !hasBookings && (
+        <Card className="border-dashed border-2 border-booking/30">
+          <CardHeader className="text-center">
+            <CardTitle>No Appointments Yet</CardTitle>
+            <CardDescription>
+              You haven't booked any appointments with us yet
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button
+              className="bg-booking hover:bg-booking-dark"
+              onClick={resetBooking}
+            >
+              Book Your First Appointment
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {hasBookings && (
+        <div className="space-y-4">
+          {bookings.map((booking, index) => {
+            const dateString = booking.date instanceof Date 
+              ? format(booking.date, 'MMMM d, yyyy')
+              : booking.date 
+                ? format(new Date(booking.date), 'MMMM d, yyyy')
+                : 'Date not available';
+                
+            return (
+              <Card key={booking.id || index} className="overflow-hidden">
+                <div className={`h-2 ${getStatusColor(booking.status)}`} />
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle>{booking.service?.name || 'Service not specified'}</CardTitle>
+                      <CardDescription>{dateString}</CardDescription>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClasses(booking.status)}`}>
+                      {booking.status || 'scheduled'}
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Time:</span>
+                      <span className="text-sm font-medium">
+                        {booking.timeSlot?.startTime || 'Time not specified'}
+                      </span>
+                    </div>
+                    {booking.createdAt && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-muted-foreground">Booked on:</span>
+                        <span className="text-sm">
+                          {format(new Date(booking.createdAt), 'MMM d, yyyy')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+          
+          <div className="flex justify-center pt-4">
+            <Button
+              onClick={resetBooking}
+              className="bg-booking hover:bg-booking-dark"
+            >
+              Book New Appointment
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+// Helper functions for styling based on booking status
+function getStatusColor(status?: string): string {
+  switch (status) {
+    case 'completed': return 'bg-green-500';
+    case 'cancelled': return 'bg-red-500';
+    default: return 'bg-booking';
+  }
+}
+
+function getStatusBadgeClasses(status?: string): string {
+  switch (status) {
+    case 'completed': return 'bg-green-100 text-green-800';
+    case 'cancelled': return 'bg-red-100 text-red-800';
+    default: return 'bg-blue-100 text-blue-800';
+  }
+}
 
 export default AppointmentHistory;
