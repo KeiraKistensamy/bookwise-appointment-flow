@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { BookingDetails, BookingStep, Service, TimeSlot } from '../types/booking';
+import { toast } from '@/hooks/use-toast';
 
 interface BookingContextType {
   currentStep: BookingStep;
@@ -10,6 +11,7 @@ interface BookingContextType {
   resetBooking: () => void;
   completeBooking: () => void;
   viewHistory: () => void;
+  sendConfirmationEmail: (booking: BookingDetails) => Promise<void>;
 }
 
 const defaultBookingDetails: BookingDetails = {
@@ -40,10 +42,47 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCurrentStep('service');
   };
 
-  const completeBooking = () => {
-    console.log('Booking completed:', bookingDetails);
+  const sendConfirmationEmail = async (booking: BookingDetails) => {
+    // In a real application, this would call a backend API endpoint
+    // that would use a service like SendGrid, Mailgun, or AWS SES
+    
+    // For demonstration purposes, we'll just show a toast notification
+    console.log('Sending confirmation email to:', booking.customerEmail);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Show success notification
+    toast({
+      title: "Email Sent",
+      description: `Confirmation email sent to ${booking.customerEmail}`,
+    });
+    
+    return Promise.resolve();
+  };
+
+  const completeBooking = async () => {
+    // Generate a unique ID for the booking
+    const bookingWithId = {
+      ...bookingDetails,
+      id: `booking-${Math.random().toString(36).substr(2, 9)}`,
+      status: 'scheduled' as const,
+      createdAt: new Date(),
+    };
+    
+    console.log('Booking completed:', bookingWithId);
+    
+    // Send confirmation email if email is provided
+    if (bookingWithId.customerEmail) {
+      await sendConfirmationEmail(bookingWithId);
+    } else {
+      toast({
+        title: "Booking Confirmed",
+        description: "Your appointment has been successfully booked.",
+      });
+    }
+    
     // In a real app, this would send the booking data to a server
-    // For now, we'll just show the confirmation step
     setCurrentStep('confirmation');
   };
   
@@ -61,6 +100,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         resetBooking,
         completeBooking,
         viewHistory,
+        sendConfirmationEmail,
       }}
     >
       {children}

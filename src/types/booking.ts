@@ -29,7 +29,7 @@ export type BookingDetails = {
   notes: string;
   status?: BookingStatus;
   createdAt?: Date;
+  emailSent?: boolean;
 };
 
 export type BookingStep = 'service' | 'datetime' | 'details' | 'confirmation' | 'history';
-

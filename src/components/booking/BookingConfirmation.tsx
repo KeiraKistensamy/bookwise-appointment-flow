@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useBooking } from '@/contexts/BookingContext';
-import { Check, Calendar, Clock, MapPin, User } from 'lucide-react';
+import { Check, Calendar, Clock, MapPin, User, Mail } from 'lucide-react';
 
 const BookingConfirmation: React.FC = () => {
-  const { bookingDetails, resetBooking } = useBooking();
+  const { bookingDetails, resetBooking, viewHistory } = useBooking();
   const { service, date, timeSlot, customerName, customerEmail, customerPhone, isNewPatient } = bookingDetails;
 
   const bookingConfirmationId = Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -22,9 +22,16 @@ const BookingConfirmation: React.FC = () => {
       </div>
       
       <h2 className="text-2xl font-bold text-center mb-2">Appointment Confirmed!</h2>
-      <p className="text-center text-muted-foreground mb-8">
-        Your appointment has been successfully booked. A confirmation has been sent to your email.
+      <p className="text-center text-muted-foreground mb-2">
+        Your appointment has been successfully booked.
       </p>
+      
+      {customerEmail && (
+        <p className="text-center text-muted-foreground mb-8 flex items-center justify-center gap-2">
+          <Mail className="h-4 w-4 text-booking" />
+          A confirmation has been sent to {customerEmail}
+        </p>
+      )}
       
       <Card className="border-booking/20 shadow-md">
         <CardHeader>
@@ -84,12 +91,19 @@ const BookingConfirmation: React.FC = () => {
             <p className="text-sm text-muted-foreground ml-6">{customerPhone}</p>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col gap-3">
           <Button 
             onClick={resetBooking} 
             className="w-full bg-booking hover:bg-booking-dark"
           >
             Book Another Appointment
+          </Button>
+          <Button 
+            onClick={viewHistory} 
+            variant="outline"
+            className="w-full"
+          >
+            View Appointment History
           </Button>
         </CardFooter>
       </Card>
