@@ -2,56 +2,72 @@
 import { Service, TimeSlot } from '../types/booking';
 import { format, addDays, setHours, setMinutes, addMinutes } from 'date-fns';
 
-// Mock services data
+// Mock services data for nursing appointments
 export const services: Service[] = [
   {
     id: '1',
-    name: 'Haircut',
-    description: 'Professional haircut with styling',
-    duration: 30,
-    price: 35,
-    category: 'Hair',
+    name: 'Initial Consultation',
+    description: 'First-time patient assessment and care planning',
+    duration: 45,
+    price: 85,
+    category: 'Consultations',
   },
   {
     id: '2',
-    name: 'Hair Coloring',
-    description: 'Full color treatment with professional products',
-    duration: 90,
-    price: 120,
-    category: 'Hair',
+    name: 'Follow-up Visit',
+    description: 'Check progress and adjust care plan as needed',
+    duration: 30,
+    price: 60,
+    category: 'Consultations',
   },
   {
     id: '3',
-    name: 'Manicure',
-    description: 'Classic manicure with polish',
-    duration: 45,
-    price: 40,
-    category: 'Nail',
+    name: 'Blood Pressure Check',
+    description: 'Quick blood pressure monitoring and assessment',
+    duration: 15,
+    price: 30,
+    category: 'Health Checks',
   },
   {
     id: '4',
-    name: 'Pedicure',
-    description: 'Relaxing pedicure with foot massage',
-    duration: 60,
-    price: 55,
-    category: 'Nail',
+    name: 'Glucose Monitoring',
+    description: 'Diabetes management and blood sugar testing',
+    duration: 20,
+    price: 40,
+    category: 'Health Checks',
   },
   {
     id: '5',
-    name: 'Facial',
-    description: 'Rejuvenating facial treatment',
-    duration: 60,
-    price: 80,
-    category: 'Skin',
+    name: 'Medication Review',
+    description: 'Comprehensive review of current medications',
+    duration: 30,
+    price: 55,
+    category: 'Medication',
   },
   {
     id: '6',
-    name: 'Massage',
-    description: 'Full body relaxation massage',
-    duration: 60,
-    price: 90,
-    category: 'Body',
+    name: 'Wound Care',
+    description: 'Professional cleaning and dressing of wounds',
+    duration: 25,
+    price: 50,
+    category: 'Treatments',
   },
+  {
+    id: '7',
+    name: 'Vaccination',
+    description: 'Administration of vaccines with consultation',
+    duration: 15,
+    price: 45,
+    category: 'Treatments',
+  },
+  {
+    id: '8',
+    name: 'Health Education',
+    description: 'Personalized health education and guidance',
+    duration: 40,
+    price: 70,
+    category: 'Education',
+  }
 ];
 
 // Mock function to generate time slots for a given date
@@ -60,8 +76,8 @@ export const generateTimeSlots = (date: Date): TimeSlot[] => {
   today.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
   
-  // Business hours: 9:00 AM to 5:00 PM
-  const startHour = 9;
+  // Nurse's office hours: 8:00 AM to 5:00 PM
+  const startHour = 8;
   const endHour = 17;
   
   const slots: TimeSlot[] = [];

@@ -9,7 +9,7 @@ import { Check, Calendar, Clock, MapPin, User } from 'lucide-react';
 
 const BookingConfirmation: React.FC = () => {
   const { bookingDetails, resetBooking } = useBooking();
-  const { service, date, timeSlot, customerName, customerEmail, customerPhone } = bookingDetails;
+  const { service, date, timeSlot, customerName, customerEmail, customerPhone, isNewPatient } = bookingDetails;
 
   const bookingConfirmationId = Math.random().toString(36).substring(2, 10).toUpperCase();
 
@@ -21,14 +21,14 @@ const BookingConfirmation: React.FC = () => {
         </div>
       </div>
       
-      <h2 className="text-2xl font-bold text-center mb-2">Booking Confirmed!</h2>
+      <h2 className="text-2xl font-bold text-center mb-2">Appointment Confirmed!</h2>
       <p className="text-center text-muted-foreground mb-8">
-        Your appointment has been successfully booked. Confirmation details have been sent to your email.
+        Your appointment has been successfully booked. A confirmation has been sent to your email.
       </p>
       
       <Card className="border-booking/20 shadow-md">
         <CardHeader>
-          <CardTitle>Booking Summary</CardTitle>
+          <CardTitle>Appointment Summary</CardTitle>
           <CardDescription>Confirmation #{bookingConfirmationId}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -65,8 +65,9 @@ const BookingConfirmation: React.FC = () => {
             <p className="flex items-start gap-2">
               <MapPin className="h-4 w-4 text-booking mt-1" />
               <span>
-                123 Beauty Street<br />
-                Salon City, SC 12345
+                Nurse Connect Clinic<br />
+                123 Health Avenue<br />
+                Medical Center, MC 12345
               </span>
             </p>
           </div>
@@ -74,10 +75,10 @@ const BookingConfirmation: React.FC = () => {
           <Separator />
           
           <div>
-            <h3 className="text-sm font-medium mb-1">Customer Details</h3>
+            <h3 className="text-sm font-medium mb-1">Patient Details</h3>
             <p className="flex items-center gap-2">
               <User className="h-4 w-4 text-booking" />
-              <span>{customerName}</span>
+              <span>{customerName} {isNewPatient && "(New Patient)"}</span>
             </p>
             <p className="text-sm text-muted-foreground ml-6">{customerEmail}</p>
             <p className="text-sm text-muted-foreground ml-6">{customerPhone}</p>
@@ -92,6 +93,16 @@ const BookingConfirmation: React.FC = () => {
           </Button>
         </CardFooter>
       </Card>
+      
+      <div className="mt-8 max-w-md mx-auto text-sm text-muted-foreground">
+        <h3 className="font-medium text-foreground mb-2">Appointment Notes:</h3>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Please arrive 10 minutes before your scheduled appointment time.</li>
+          <li>Bring your ID and insurance card if applicable.</li>
+          <li>New patients should arrive 15 minutes early to complete necessary paperwork.</li>
+          <li>To cancel or reschedule, please call at least 24 hours in advance.</li>
+        </ul>
+      </div>
     </div>
   );
 };

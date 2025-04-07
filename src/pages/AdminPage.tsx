@@ -11,34 +11,38 @@ import { Link } from 'react-router-dom';
 const mockBookings = [
   {
     id: 'bk-001',
-    serviceName: 'Haircut',
+    serviceName: 'Initial Consultation',
     date: new Date('2025-04-10T10:30:00'),
     customerName: 'John Smith',
     customerEmail: 'john@example.com',
+    isNewPatient: true,
     status: 'upcoming',
   },
   {
     id: 'bk-002',
-    serviceName: 'Manicure',
+    serviceName: 'Blood Pressure Check',
     date: new Date('2025-04-11T14:00:00'),
     customerName: 'Emily Johnson',
     customerEmail: 'emily@example.com',
+    isNewPatient: false,
     status: 'upcoming',
   },
   {
     id: 'bk-003',
-    serviceName: 'Hair Coloring',
+    serviceName: 'Medication Review',
     date: new Date('2025-04-09T11:00:00'),
     customerName: 'Michael Brown',
     customerEmail: 'michael@example.com',
+    isNewPatient: false,
     status: 'completed',
   },
   {
     id: 'bk-004',
-    serviceName: 'Facial',
+    serviceName: 'Wound Care',
     date: new Date('2025-04-08T15:30:00'),
     customerName: 'Sarah Wilson',
     customerEmail: 'sarah@example.com',
+    isNewPatient: true,
     status: 'cancelled',
   },
 ];
@@ -61,8 +65,8 @@ const AdminPage: React.FC = () => {
       <header className="bg-white border-b py-6">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-booking">BookWise Admin</h1>
-            <p className="text-muted-foreground">Manage your appointments</p>
+            <h1 className="text-3xl font-bold text-booking">Nurse Connect Admin</h1>
+            <p className="text-muted-foreground">Manage your patient appointments</p>
           </div>
           <Link to="/">
             <Button variant="outline">View Booking Page</Button>
@@ -73,8 +77,8 @@ const AdminPage: React.FC = () => {
       <main className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Appointments</CardTitle>
-            <CardDescription>View and manage all customer bookings</CardDescription>
+            <CardTitle>Patient Appointments</CardTitle>
+            <CardDescription>View and manage all scheduled appointments</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="upcoming">
@@ -125,7 +129,7 @@ interface BookingsListProps {
 
 const BookingsList: React.FC<BookingsListProps> = ({ bookings, onStatusChange }) => {
   if (bookings.length === 0) {
-    return <p className="text-center py-8 text-muted-foreground">No bookings found</p>;
+    return <p className="text-center py-8 text-muted-foreground">No appointments found</p>;
   }
   
   return (
@@ -134,7 +138,14 @@ const BookingsList: React.FC<BookingsListProps> = ({ bookings, onStatusChange })
         <Card key={booking.id} className="overflow-hidden">
           <div className="flex flex-col md:flex-row">
             <div className="flex-1 p-4">
-              <h3 className="font-semibold mb-2">{booking.serviceName}</h3>
+              <h3 className="font-semibold mb-2">
+                {booking.serviceName}
+                {booking.isNewPatient && (
+                  <span className="ml-2 text-xs bg-blue-100 text-blue-800 py-0.5 px-2 rounded-full">
+                    New Patient
+                  </span>
+                )}
+              </h3>
               
               <div className="space-y-1 text-sm">
                 <div className="flex items-center gap-2">
@@ -193,7 +204,7 @@ const BookingsList: React.FC<BookingsListProps> = ({ bookings, onStatusChange })
                   variant="outline" 
                   onClick={() => onStatusChange(booking.id, 'upcoming')}
                 >
-                  Restore Booking
+                  Restore Appointment
                 </Button>
               )}
             </div>

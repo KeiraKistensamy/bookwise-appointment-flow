@@ -21,6 +21,8 @@ export type BookingDetails = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  dateOfBirth?: string;
+  isNewPatient?: boolean;
   notes: string;
 };
 
