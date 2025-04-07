@@ -9,6 +9,7 @@ interface BookingContextType {
   updateBookingDetails: (details: Partial<BookingDetails>) => void;
   resetBooking: () => void;
   completeBooking: () => void;
+  viewHistory: () => void;
 }
 
 const defaultBookingDetails: BookingDetails = {
@@ -45,6 +46,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     // For now, we'll just show the confirmation step
     setCurrentStep('confirmation');
   };
+  
+  const viewHistory = () => {
+    setCurrentStep('history');
+  };
 
   return (
     <BookingContext.Provider
@@ -55,6 +60,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         updateBookingDetails,
         resetBooking,
         completeBooking,
+        viewHistory,
       }}
     >
       {children}

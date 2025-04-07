@@ -6,6 +6,7 @@ import ServiceSelection from './ServiceSelection';
 import DateTimeSelection from './DateTimeSelection';
 import CustomerDetailsForm from './CustomerDetailsForm';
 import BookingConfirmation from './BookingConfirmation';
+import AppointmentHistory from './AppointmentHistory';
 
 const BookingContent: React.FC = () => {
   const { currentStep } = useBooking();
@@ -18,6 +19,7 @@ const BookingContent: React.FC = () => {
       {currentStep === 'datetime' && <DateTimeSelection />}
       {currentStep === 'details' && <CustomerDetailsForm />}
       {currentStep === 'confirmation' && <BookingConfirmation />}
+      {currentStep === 'history' && <AppointmentHistory />}
     </div>
   );
 };

@@ -14,7 +14,10 @@ export type TimeSlot = {
   available: boolean;
 };
 
+export type BookingStatus = 'scheduled' | 'completed' | 'cancelled';
+
 export type BookingDetails = {
+  id?: string; // unique booking ID
   service: Service | null;
   date: Date | null;
   timeSlot: TimeSlot | null;
@@ -24,6 +27,9 @@ export type BookingDetails = {
   dateOfBirth?: string;
   isNewPatient?: boolean;
   notes: string;
+  status?: BookingStatus;
+  createdAt?: Date;
 };
 
-export type BookingStep = 'service' | 'datetime' | 'details' | 'confirmation';
+export type BookingStep = 'service' | 'datetime' | 'details' | 'confirmation' | 'history';
+
